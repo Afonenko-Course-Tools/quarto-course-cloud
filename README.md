@@ -7,8 +7,8 @@
 ## Установка
 
 ```sh
-quarto add AfonenkoA/programming-course-core-specification@v1.0.0
-quarto add AfonenkoA/programming-course-cloud-specification@v1.0.0
+quarto add AfonenkoA/programming-course-core-specification
+quarto add AfonenkoA/programming-course-cloud-specification
 ```
 
 В `_quarto.yml`:
@@ -62,7 +62,7 @@ cloud:
 
 ```sh
 cd examples/course
-quarto add AfonenkoA/programming-course-core-specification@v1.0.0
+quarto add AfonenkoA/programming-course-core-specification
 quarto add ../..
 quarto render
 quarto preview
@@ -71,6 +71,20 @@ quarto preview
 `quarto add ../..` устанавливает текущее расширение из корня этого репозитория. Для локального ядра замените команду установки с GitHub на `quarto add ../../../programming-course-core-specification`, если репозитории расположены рядом. Можно указать любой другой путь к ядру; имя рабочего каталога не используется кодом расширения.
 
 Пример содержит только Cloud: две ВМ, два шага и внешнюю проверку из `check.sh`. Код действий отображается и проверяется как содержимое задания; сборка сайта его не исполняет.
+
+## Автоматическая проверка
+
+GitHub Actions проверяет PR, изменения в `main`/`master`, ручные запуски и еженедельно оба актуальных канала Quarto: `release` и `pre-release`. CUE используется актуального стабильного выпуска. Actions закреплены по SHA, обновления предлагает Dependabot.
+
+CI отдельно получает Course Core по конкретному коммиту, указанному в `.github/workflows/ci.yml`, и устанавливает оба локальных расширения во временный пример стандартной командой `quarto add`. Коммит зависимости обновляют явно при проверке совместимости. Текущая настройка использует Core 1.1.0 с API 1.0; плавающая ветка внешнего репозитория не меняет результат повторного запуска.
+
+Для локальной проверки передайте путь к клону Core:
+
+```sh
+quarto run tests/check.ts ../programming-course-core-specification
+```
+
+Проверяются сборка книги, модель CUE, обе ВМ и внешний файл проверки. Ошибки отсутствующего `check`, повторного ключа шага, необъявленной ВМ и отсутствующего файла должны завершать рендер неуспешно и удалять предыдущую модель. Студенческие команды не исполняются. Пример и временные результаты удаляются автоматически.
 
 Схема находится в `_extensions/course-cloud/spec/cloud.cue`, контракт зависимости — в `contract.json` внутри пакета. Расширение проверяет авторский профиль и добавляет `extensions.cloud` в модель. Экспорт `_produced.yaml`, запуск ВМ, сети, диски и планирование выполнения относятся к отдельному компилятору и среде исполнения.
 
