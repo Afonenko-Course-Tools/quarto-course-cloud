@@ -1,4 +1,4 @@
-name: Check Quarto and CUE
+name: Проверка Quarto и CUE
 
 on:
   pull_request:
@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   check:
-    name: Check (${{ matrix.quarto }})
+    name: Проверка (${{ matrix.quarto }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
@@ -28,12 +28,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Check out the tested Course Core dependency
+      - name: Получение проверяемого ядра Course Core
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: AfonenkoA/programming-course-core-specification
-          # Core 1.1.0; update this commit explicitly when upgrading the adapter.
-          ref: 6c2d7ae95e9c24f7a3b24f1ccd29678c58d15538
+          # Коммит текущего ядра обновляется вместе с адаптером.
+          ref: d5e31f204eadf17ba5a4477ccc30aecbaee574ec
           path: .ci-deps/core
           persist-credentials: false
       - uses: quarto-dev/quarto-actions/setup@8a96df13519ee81fd526f2dfca5962811136661b # v2.2.0
@@ -42,9 +42,9 @@ jobs:
       - uses: cue-lang/setup-cue@b0e30e540a2dae47304ebf16586a5b2db023b61c # v2.0.0
         with:
           version: latest
-      - name: Tool versions
+      - name: Версии инструментов
         run: |
           quarto --version
           cue version
-      - name: Render Cloud example and check invalid assignments
+      - name: Сборка примера Cloud и проверка ошибочных заданий
         run: quarto run tests/check.ts .ci-deps/core
