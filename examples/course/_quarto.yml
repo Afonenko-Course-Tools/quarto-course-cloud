@@ -1,5 +1,7 @@
 project:
   type: book
+  pre-render: _extensions/course-core/entrypoints/pre.ts
+  post-render: _extensions/course-core/entrypoints/post.ts
   output-dir: _book
   resources:
     - "!projects/**"
@@ -16,6 +18,7 @@ lang: ru
 course:
   id: demo-cloud
   validate: true
+  adapters: [cloud]
 filters:
   - course-core
   - course-cloud

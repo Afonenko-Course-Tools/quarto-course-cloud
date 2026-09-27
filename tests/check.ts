@@ -38,10 +38,37 @@ try {
   assert(steps[0].actions[0].source.file === "/projects/service/check.sh", "Потерян путь к внешнему файлу проверки");
   assert(Object.keys(model.assessments[0].extensions.cloud["virtual-machines"]).length === 2, "Модель должна содержать обе виртуальные машины");
 
+  const configPath = join(root, "_quarto.yml");
+  const config = await Deno.readTextFile(configPath);
+  await Deno.writeTextFile(configPath, config.replace("  - course-core\n  - course-cloud", "  - course-cloud\n  - course-core"));
+  await run(render, "course-core должен предшествовать");
+  await Deno.writeTextFile(configPath, config);
+  console.log("ПРОЙДЕНО: неверный порядок фильтров отклонён до извлечения закрытых данных");
   const taskPath = join(root, "tasks/index.qmd");
   const labPath = join(root, "labs/01.qmd");
   const task = await Deno.readTextFile(taskPath);
   const lab = await Deno.readTextFile(labPath);
+  const secret = "ЗАКРЫТОЕ-ОБЛАЧНОЕ-ДЕЙСТВИЕ";
+  const hidden = task.replace(/::::\s*$/, `::: {.when-full}
+
+### Закрытый шаг {.cloud-step key="private"}
+
+\`\`\`{.sh .cloud-action phase="solution" vm="client"}
+${secret}
+\`\`\`
+
+:::
+::::
+`);
+  await Deno.writeTextFile(configPath, config.replace("  validate: true", "  validate: true\n  view: student"));
+  await Deno.writeTextFile(taskPath, hidden);
+  await run(render);
+  const publicModel = await Deno.readTextFile(modelPath);
+  const publicHtml = await Deno.readTextFile(join(root, "_book/tasks/index.html"));
+  assert(!publicModel.includes(secret) && !publicHtml.includes(secret), "Закрытое действие попало в студенческую модель или HTML");
+  await Deno.writeTextFile(configPath, config);
+  await Deno.writeTextFile(taskPath, task);
+  console.log("ПРОЙДЕНО: скрытый вложенный блок удалён до извлечения Cloud");
   const cases = [
     { name: "отсутствие проверки", task: task.replace('phase="check"', 'phase="solution"'), lab, error: "CLOUD001" },
     { name: "повтор ключа шага", task: task.replace('key="client"', 'key="configure"'), lab, error: "CLOUD004" },
@@ -58,7 +85,7 @@ try {
     assert(!await exists(modelPath), `Сохранена устаревшая модель: ${item.name}`);
     console.log(`ПРОЙДЕНО, ошибка отклонена: ${item.name}`);
   }
-  console.log("ПРОЙДЕНО Cloud: установка, интеграция с Core, проверка CUE, две машины, внешний файл и отклонение неверной разметки");
+  console.log("ПРОЙДЕНО Cloud: установка, интеграция с ядром, проверка CUE, две машины, внешний файл и отклонение неверной разметки");
 } finally {
   await Deno.remove(root, { recursive: true });
 }

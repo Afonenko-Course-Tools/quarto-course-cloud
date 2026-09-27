@@ -2,23 +2,32 @@ package course
 
 import "list"
 
+// BEGIN GENERATED VOCABULARY
+// Источник: contract.json; изменить: quarto run tools/sync-contract.ts.
+#CloudTarget: "cloud"
+#CloudPhase: "check" | "solution" | "pre-step" | "post-step"
+#CloudRequiredPhase: "check"
+#CloudPreparePhase: "prepare"
+#CloudKey: string & =~"^[a-z][a-z0-9-]*$"
+// END GENERATED VOCABULARY
+
 #CloudAction: {
-	phase: "check" | "solution" | "pre-step" | "post-step"
+	phase: #CloudPhase
 	vm: string & !=""
 	language: string & !=""
 	source: #Source
 	unknownAttributes: []
 }
 #CloudStep: {
-	key: string & =~"^[a-z][a-z0-9-]*$"
+	key: #CloudKey
 	title: string & !=""
 	unknownAttributes: []
 	actions: [...#CloudAction] & list.MinItems(1)
-	CLOUD001_check: list.Contains([for a in actions {a.phase}], "check") & true
+	CLOUD001_check: list.Contains([for a in actions {a.phase}], #CloudRequiredPhase) & true
 	CLOUD002_uniqueActions: [for a in actions {"\(a.vm)/\(a.phase)"}] & list.UniqueItems
 	CLOUD003_checkPerVm: {
 		for a in actions {
-			(a.vm): list.Contains([for c in actions if c.phase == "check" {c.vm}], a.vm) & true
+			(a.vm): list.Contains([for c in actions if c.phase == #CloudRequiredPhase {c.vm}], a.vm) & true
 		}
 	}
 }
@@ -30,7 +39,7 @@ import "list"
 	CLOUD004_uniqueSteps: [for s in steps {s.key}] & list.UniqueItems
 }
 #CloudAssessment: {
-	prepare: [...{phase: "prepare", vm: string, language: string & !="", source: #Source, unknownAttributes: []}]
+	prepare: [...{phase: #CloudPreparePhase, vm: string, language: string & !="", source: #Source, unknownAttributes: []}]
 	VMs="virtual-machines": {
 		[string]: {template: string & !=""}
 	}
@@ -41,7 +50,7 @@ import "list"
 }
 #Exercise: {
 	target: string
-	if target == "cloud" {extensions: cloud: #CloudExercise}
+	if target == #CloudTarget {extensions: cloud: #CloudExercise}
 }
 #Assessment: {extensions: cloud?: #CloudAssessment}
 #Course: {
@@ -49,7 +58,7 @@ import "list"
 	exercises: [...#Exercise]
 	CLOUD005_declaredVm: {
 		for a in assessments {
-			for e in exercises if e.target == "cloud" if list.Contains(a.items, e.id) {
+			for e in exercises if e.target == #CloudTarget if list.Contains(a.items, e.id) {
 				for s in e.extensions.cloud.steps {
 					for action in s.actions {
 						"\(a.id)/\(e.id)/\(s.key)/\(action.vm)": list.Contains(
