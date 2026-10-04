@@ -17,7 +17,9 @@ quarto add Afonenko-Course-Tools/quarto-course-cloud
 
 ```yaml
 project:
-  pre-render: _extensions/Afonenko-Course-Tools/course-core/entrypoints/pre.ts
+  pre-render:
+    - _extensions/Afonenko-Course-Tools/course-core/entrypoints/pre.ts
+    - _extensions/Afonenko-Course-Tools/course-core/entrypoints/owner-freeze.ts
   post-render: _extensions/Afonenko-Course-Tools/course-core/entrypoints/post.ts
 course:
   id: cloud-course
@@ -31,7 +33,9 @@ filters: [course-core, course-cloud]
 ## Описание задания
 
 ````qmd
-:::: {#exr-service target="cloud"}
+## Работа со службой {#sec-service}
+
+:::: {#exr-service course-role="independent-study" difficulty="introductory" target="cloud"}
 ## Состояние службы
 
 ### Настройка {.cloud-step key="configure"}
@@ -81,8 +85,8 @@ cloud:
 cd examples/course
 quarto add ../../../quarto-course
 quarto add ../..
-quarto render
-quarto preview
+quarto run render.ts student
+quarto run render.ts full
 ```
 
 Пример содержит две виртуальные машины, два шага и внешний файл проверки `check.sh`. Пример ожидает соседний локальный репозиторий `quarto-course`; при установке ядра из GitHub укажите в `_quarto.yml` путь с каталогом владельца. После изменения адаптера повторите `quarto add ../..`, чтобы обновить его установленную копию.
@@ -116,3 +120,45 @@ GitHub Actions выполняет эти проверки для PR, измен�
 Модули извлечения не выполняют команды задания и не создают файлов целевой
 платформы. Фильтр отвечает за обход документа и запись фрагмента, отдельные
 модули — за преобразование разметки, схема CUE — за ограничения модели.
+
+## Текущий авторский маршрут Core
+
+Каждое `exr-*` явно задаёт `course-role` (`demonstration`, `discussion`,
+`independent-study` или `control`) и `difficulty`; ближайший заголовок темы
+имеет явно написанный ID `sec-*`. В книге для этого нужен отдельный заголовок
+внутри главы: заголовок самой главы Quarto переносит в metadata. Примеры
+используют `difficulty="introductory"`.
+Объявления `exm-*` остаются обычными учебными примерами и не создают Exercise.
+Решение демонстрации открыто, если его родитель открыт; контрольные задания,
+ключи и обычные решения не появляются в студенческом представлении.
+
+В конфигурации нужны профили `student`/`full` с соответствующим `course.view`
+и отдельными `project.output-dir`. Последний `pre-render` — установленный
+`entrypoints/owner-freeze.ts`. Установку расширений выполняют отдельно.
+Авторский `examples/course/render.ts` создаёт свежую копию исходников примера,
+затем вызывает установленный Core: `prepareOwner` → `activateOwner` → один
+нативный HTML render с переданной metadata → `check(runtime(stage, [], false))`
+→ `finishOwner` → `validateOwnerResources`. Проверка собирает реальные фрагменты
+без повторного render и выполняется до запечатывания ресурсов. При ошибке
+модели завершение owner не вызывается. Команда печатает пути к HTML и
+`course.json` в каталоге попытки; после изменения исходников или профиля
+запускают новую попытку.
+
+При установке из GitHub передайте второй аргумент
+`_extensions/Afonenko-Course-Tools/course-core` в `render.ts` и используйте тот же
+каталог во всех обработчиках. До preflight авторская команда вызывает существующий
+`pre.ts`, чтобы удалить прежнюю модель Core и при раннем отказе.
+Завершённое частное состояние owner не сбрасывается и не переиспользуется.
+Прямой `quarto render` канонических заданий требует этого участвующего маршрута;
+HTML owner не добавляет поддержку PDF/Reveal. Независимые презентации без таких
+заданий продолжают использовать собственный обычный маршрут.
+
+Проверяемый commit Core закреплён в `.github/workflows/ci.yml`; интеграционные
+тесты устанавливают этот пакет целиком и проверяют декларации. Это не доставка
+на платформу: экспорт/импорт, отправка студенческих работ и синхронизация оценок
+не реализованы данным адаптером.
+
+Внутренний `course-core-capture` передаётся ядром только после проверенного
+закрытого capture. Адаптер остаётся пассивным в этом проходе; в настоящем
+render извлечение работает обычно. Авторское значение маркера ядро очищает,
+а адаптер проверяет порядок фильтров до обработки маркера.
