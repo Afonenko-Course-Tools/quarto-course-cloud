@@ -9,7 +9,8 @@ function M.validate(doc)
   local value = native.read(doc)
   for _, exercise in ipairs(value.exercises) do native.vet(exercise.payload, "#CloudExercise") end
   if value.assessment then native.vet(value.assessment, "#CloudAssessment") end
-  if value.assessment then
+  if doc.meta.assessment then
+    local machines = value.assessment and value.assessment["virtual-machines"] or {}
     local members = {}
     doc:walk({Div = function(div)
       if div.classes:includes("assessment-items") then
@@ -22,7 +23,7 @@ function M.validate(doc)
       if members[exercise.id] then
         for _, step in ipairs(exercise.payload.steps) do
           for _, action in ipairs(step.actions) do
-            assert(value.assessment["virtual-machines"][action.vm], "CLOUD005_declaredVm: " .. action.vm)
+            assert(machines[action.vm], "CLOUD005_declaredVm: " .. action.vm)
           end
         end
       end

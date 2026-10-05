@@ -230,8 +230,37 @@ echo ready
 :::::
 
 `;
+  const hiddenMissingMachines = `---
+assessment:
+  kind: lab
+---
+
+# Закрытая лабораторная {#sec-lab-01}
+
+${hiddenLocal}
+::: {.when-full}
+
+::: {.assessment-items}
+1. @exr-hidden
+:::
+:::
+`;
   const cases = [
-    { name: "скрытая локальная необъявленная VM", task, lab: lab.replace('::: {.assessment-items}', hiddenLocal + '::: {.assessment-items}').replace('1. @exr-service', '1. @exr-service\n2. @exr-hidden'), error: "CLOUD005_declaredVm" },
+    {
+      name: "скрытая локальная VM без cloud.virtual-machines",
+      task,
+      lab: hiddenMissingMachines,
+      error: "CLOUD005_declaredVm",
+    },
+    {
+      name: "скрытая локальная необъявленная VM",
+      task,
+      lab: lab.replace(
+        "::: {.assessment-items}",
+        hiddenLocal + "::: {.assessment-items}",
+      ).replace("1. @exr-service", "1. @exr-service\n2. @exr-hidden"),
+      error: "CLOUD005_declaredVm",
+    },
     {
       name: "скрытая неверная фаза",
       task: task.replace(
@@ -317,6 +346,19 @@ PRIVATE-INVALID
     );
     console.log(`ПРОЙДЕНО, ошибка отклонена: ${item.name}`);
   }
+  // An unknown cross-document member cannot be assigned a local VM requirement.
+  await Deno.writeTextFile(taskPath, task);
+  await Deno.writeTextFile(
+    labPath,
+    lab.replace(
+      /cloud:\n  virtual-machines:\n(?:    [^\n]+\n      template: [^\n]+\n)+/,
+      "",
+    ),
+  );
+  await selectedDocument(root, "labs/01.qmd", "student");
+  console.log(
+    "ПРОЙДЕНО: неизвестный междокументный member без VM остаётся deferred локально",
+  );
   await Deno.writeTextFile(
     configPath,
     config.replace("adapters: [cloud]", "adapters: []"),
