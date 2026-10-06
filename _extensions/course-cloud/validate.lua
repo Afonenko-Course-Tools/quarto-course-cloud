@@ -13,7 +13,7 @@ function M.validate(doc)
     local machines = value.assessment and value.assessment["virtual-machines"] or {}
     local members = {}
     doc:walk({Div = function(div)
-      if div.classes:includes("assessment-items") then
+      if div.classes:includes("task-items") then
         div:walk({Cite = function(cite)
           for _, reference in ipairs(cite.citations) do members[reference.id] = true end
         end})

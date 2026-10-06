@@ -33,7 +33,7 @@ jobs:
         with:
           repository: Afonenko-Course-Tools/quarto-course
           # Опубликованный релиз bundle Core/Presentation/Navigation.
-          ref: v2.1.0
+          ref: v3.0.0
           path: .ci-deps/core
           persist-credentials: false
       - uses: quarto-dev/quarto-actions/setup@8a96df13519ee81fd526f2dfca5962811136661b # v2.2.0
@@ -44,9 +44,13 @@ jobs:
           version: v0.17.1
       - name: Проверка единого словаря контракта
         run: quarto run tools/sync-contract.ts --check
+      - run: quarto run tests/native-model.ts .ci-deps/core
+      - run: quarto run tests/native-ordinary.ts .ci-deps/core
       - name: Версии инструментов
         run: |
           quarto --version
           cue version
       - name: Сборка примера Cloud и проверка ошибочных заданий
-        run: quarto run tests/check.ts .ci-deps/core
+        run: |
+          quarto run tests/check.ts .ci-deps/core
+          CORE="$PWD/.ci-deps/core" bash tools/check-demo.sh

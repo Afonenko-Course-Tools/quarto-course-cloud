@@ -27,7 +27,7 @@ function M.read(div)
   local content = pandoc.List()
   local function flatten(blocks)
     for _, block in ipairs(blocks) do
-      if block.t == "Div" and (block.classes:includes("when-full") or block.classes:includes("when-student")
+      if block.t == "Div" and (block.classes:includes("content-visible")
         or block.attributes["when-profile"] or block.attributes["unless-profile"]) then flatten(block.content)
       else content:insert(block) end
     end

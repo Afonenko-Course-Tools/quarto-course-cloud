@@ -1,3 +1,10 @@
+---
+code-links:
+  - text: Исходники примера
+    icon: github
+    href: https://github.com/Afonenko-Course-Tools/quarto-course-cloud/tree/v2.1.0/examples/course
+---
+
 # О курсе {.unnumbered #sec-intro}
 
 Условия находятся в @sec-tasks. Состав занятия задан в @sec-lab-01.

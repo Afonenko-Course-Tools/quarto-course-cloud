@@ -12,7 +12,11 @@ end
 function M.read(doc)
   local source = M.source()
   local value = {source = source, exercises = pandoc.List()}
-  doc:walk({Div = function(d)
+  doc:walk({traverse = "topdown", Div = function(d)
+    -- Core resolves this reserved public projection alongside full source facts.
+    -- It is service transport, not a second authored platform exercise.
+    if d.classes:includes("course-export-projection") and
+      d.attributes["data-course-export-projection"] == "public" then return d, false end
     if d.attributes.target == contract.name then
       value.exercises:insert({id = d.identifier, payload = steps.read(d)})
     end
@@ -26,7 +30,7 @@ function M.read(doc)
     local blocks = pandoc.List()
     local function flatten(content)
       for _, block in ipairs(content) do
-        if block.t == "Div" and (block.classes:includes("when-full") or block.classes:includes("when-student")
+        if block.t == "Div" and (block.classes:includes("content-visible")
           or block.attributes["when-profile"] or block.attributes["unless-profile"]) then flatten(block.content)
         else blocks:insert(block) end
       end
@@ -58,7 +62,7 @@ function M.write(doc, value)
   if not pandoc.path.is_relative(output) then output = pandoc.path.make_relative(output, quarto.project.output_directory or root) end
   value.scope = "document"
   value.adapter = contract.name
-  value.course = {id = pandoc.utils.stringify(doc.meta.course.id), view = doc.meta.course.view and pandoc.utils.stringify(doc.meta.course.view) or nil}
+  value.course = {id = doc.meta.course.id and pandoc.utils.stringify(doc.meta.course.id) or nil, view = doc.meta.course.view and pandoc.utils.stringify(doc.meta.course.view) or nil}
   value.document = {source = value.source, format = FORMAT, output = output, profiles = profiles}
   local view = value.course.view or "default"
   assert(view == "student" or view == "full" or view == "default", "Invalid adapter view")

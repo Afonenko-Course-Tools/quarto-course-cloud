@@ -28,7 +28,7 @@ export async function renderNative(
       {
         args: [
           "run",
-          "_extensions/course-core/entrypoints/check.ts",
+          "_extensions/Afonenko-Course-Tools/course-core/entrypoints/check.ts",
           ".",
           profile,
         ],
@@ -120,7 +120,12 @@ export async function selectedDocument(
     throw new Error("Selected native command consumed retained documents");
   }
   const invalid = await new Deno.Command(Deno.env.get("QUARTO") || "quarto", {
-    args: ["run", "_extensions/course-core/entrypoints/check.ts", ".", profile],
+    args: [
+      "run",
+      "_extensions/Afonenko-Course-Tools/course-core/entrypoints/check.ts",
+      ".",
+      profile,
+    ],
     cwd: source,
     stdout: "piped",
     stderr: "piped",
