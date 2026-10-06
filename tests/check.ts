@@ -62,7 +62,22 @@ async function exists(path: string) {
 
 try {
   await copy(join(repo, "examples/course"), root, { overwrite: true });
+  // A clean checkout has no installed payload/cache; local copies must match it.
+  for (const name of ["_extensions", "_generated", "_book", ".quarto"]) {
+    try {
+      await Deno.remove(join(root, name), { recursive: true });
+    } catch (error) {
+      if (!(error instanceof Deno.errors.NotFound)) throw error;
+    }
+  }
   await run(["add", core, "--no-prompt"]);
+  await Deno.mkdir(join(root, "_extensions/Afonenko-Course-Tools"), {
+    recursive: true,
+  });
+  await Deno.rename(
+    join(root, "_extensions/course-core"),
+    join(root, "_extensions/Afonenko-Course-Tools/course-core"),
+  );
   await run(["add", repo, "--no-prompt"]);
   await verifyInstalled(root, repo, "cloud");
   const render = ["render", "--fail-if-warnings"];
@@ -192,7 +207,7 @@ ${secret}
     labPath,
     lab.replace(
       "::: {.task-items}",
-      ":::: {.content-visible when-profile=\"full\"}\n\n::: {.task-items}",
+      ':::: {.content-visible when-profile="full"}\n\n::: {.task-items}',
     ) + "\n::::\n",
   );
   await run(render);
