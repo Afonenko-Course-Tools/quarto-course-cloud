@@ -49,8 +49,8 @@ import "list"
 	}
 }
 #Exercise: {
-	target: string
-	if target == #CloudTarget {extensions: cloud: #CloudExercise}
+	target?: string
+	if target != _|_ if target == #CloudTarget {extensions: cloud: #CloudExercise}
 }
 #Assessment: {extensions: cloud?: #CloudAssessment}
 #Course: {
@@ -58,7 +58,7 @@ import "list"
 	exercises: [...#Exercise]
 	CLOUD005_declaredVm: {
 		for a in assessments {
-			for e in exercises if e.target == #CloudTarget if list.Contains(a.items, e.id) {
+			for e in exercises if e.target != _|_ if e.target == #CloudTarget if list.Contains(a.items, e.id) {
 				for s in e.extensions.cloud.steps {
 					for action in s.actions {
 						"\(a.id)/\(e.id)/\(s.key)/\(action.vm)": list.Contains(

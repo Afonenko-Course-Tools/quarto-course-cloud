@@ -1,13 +1,17 @@
 project:
   type: book
   pre-render:
-    - _extensions/course-core/entrypoints/pre.ts
-  post-render: _extensions/course-core/entrypoints/post.ts
+    - _extensions/Afonenko-Course-Tools/course-core/entrypoints/pre.ts
+  post-render: _extensions/Afonenko-Course-Tools/course-core/entrypoints/post.ts
   output-dir: _book
   resources:
     - "!projects/**"
 book:
   title: Служба на виртуальной машине
+  repo-url: https://github.com/Afonenko-Course-Tools/quarto-course-cloud
+  repo-subdir: examples/course
+  repo-actions: [source]
+  repo-branch: v2.1.0
   chapters:
     - index.qmd
     - tasks/index.qmd
@@ -24,5 +28,7 @@ filters:
   - course-core
   - course-cloud
 profile:
-  default: student
+  default: full
   group: [[student, full]]
+
+bibliography: references.bib

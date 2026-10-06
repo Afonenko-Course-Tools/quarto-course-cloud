@@ -158,7 +158,7 @@ try {
   const secret = "ЗАКРЫТОЕ-ОБЛАЧНОЕ-ДЕЙСТВИЕ";
   const hidden = task.replace(
     /::::\s*$/,
-    `::: {.when-full}
+    `::: {.content-visible when-profile="full"}
 
 ### Закрытый шаг {.cloud-step key="private"}
 
@@ -191,8 +191,8 @@ ${secret}
   await Deno.writeTextFile(
     labPath,
     lab.replace(
-      "::: {.assessment-items}",
-      ":::: {.when-full}\n\n::: {.assessment-items}",
+      "::: {.task-items}",
+      ":::: {.content-visible when-profile=\"full\"}\n\n::: {.task-items}",
     ) + "\n::::\n",
   );
   await run(render);
@@ -216,7 +216,7 @@ ${secret}
   await Deno.writeTextFile(labPath, lab);
   const hiddenLocal = `## Закрытая тема {#sec-hidden-topic}
 
-::::: {.when-full}
+::::: {.content-visible when-profile="full"}
 
 :::: {#exr-hidden target="cloud" course-role="control" difficulty="introductory"}
 ## Закрытая проверка
@@ -238,9 +238,9 @@ assessment:
 # Закрытая лабораторная {#sec-lab-01}
 
 ${hiddenLocal}
-::: {.when-full}
+::: {.content-visible when-profile="full"}
 
-::: {.assessment-items}
+::: {.task-items}
 1. @exr-hidden
 :::
 :::
@@ -256,8 +256,8 @@ ${hiddenLocal}
       name: "скрытая локальная необъявленная VM",
       task,
       lab: lab.replace(
-        "::: {.assessment-items}",
-        hiddenLocal + "::: {.assessment-items}",
+        "::: {.task-items}",
+        hiddenLocal + "::: {.task-items}",
       ).replace("1. @exr-service", "1. @exr-service\n2. @exr-hidden"),
       error: "CLOUD005_declaredVm",
     },
@@ -265,7 +265,7 @@ ${hiddenLocal}
       name: "скрытая неверная фаза",
       task: task.replace(
         /::::\s*$/,
-        `::: {.when-full}
+        `::: {.content-visible when-profile="full"}
 
 ### Закрытая проверка {.cloud-step key="hidden"}
 
@@ -284,7 +284,7 @@ PRIVATE-INVALID
       name: "скрытый внешний symlink",
       task: task.replace(
         /::::\s*$/,
-        `::: {.when-full}
+        `::: {.content-visible when-profile="full"}
 
 ### Закрытая проверка {.cloud-step key="hidden"}
 

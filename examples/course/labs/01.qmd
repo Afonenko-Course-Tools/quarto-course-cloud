@@ -13,6 +13,6 @@ cloud:
 
 Изучите @sec-tasks перед началом занятия.
 
-::: {.assessment-items}
+::: {.task-items}
 1. @exr-service
 :::
