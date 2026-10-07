@@ -57,3 +57,19 @@ key шага, локальная/междокументная undeclared VM, в�
 `git diff --check` и Deno fmt --check для пяти изменённых TS-файлов — код 0.
 Исходные `spec/cloud.cue`, `contract.json`, фильтр активации, predicates действий
 и виртуальных машин не менялись. Общего runtime или повторного CUE-валидатора нет.
+
+CL2: complete — русские README, собственные пояснения демонстрационных TS и
+`docs/diagnostics.md` готовы. Веб-книга уже имела `lang: ru` и ссылки на source;
+QMD, source refs, версии и финальные dependency pins оставлены координатору.
+`CORE=… bash tools/check-demo.sh` завершился кодом 0 на Quarto 1.10.18 и 1.11.5.
+Полная web-команда с `--fail-if-warnings` успешна. В отдельном исходном JSON-pass
+выбранного `collectExport` Quarto печатает `Unable to resolve crossref @sec-tasks`
+(по четыре предупреждения на версию); policy не менялась, этот pass завершился
+успешно. HTML/CUE/export не подтверждают запуск VM или команды действия.
+
+Final review: авторская проверка всего diff; независимое ревью выполняет
+координатор. Проверены undeclared VM, missing step key, path outside, missing
+source, внешнее падение CUE с кодом/stdout/stderr. Необязательные metadata и
+activation сохранены; новые counterexample QMD в демонстрацию не добавлялись.
+Отложенных minor-изменений нет. Локальный remote CI, push, PR, merge, release,
+Pages publishing и реальная облачная инфраструктура не запускались.
