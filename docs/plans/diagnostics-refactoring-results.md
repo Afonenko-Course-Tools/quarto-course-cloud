@@ -73,3 +73,31 @@ source, внешнее падение CUE с кодом/stdout/stderr. Необ�
 activation сохранены; новые counterexample QMD в демонстрацию не добавлялись.
 Отложенных minor-изменений нет. Локальный remote CI, push, PR, merge, release,
 Pages publishing и реальная облачная инфраструктура не запускались.
+
+## Scoped fix round 1 — third review M1
+
+База исправления: `c6f8f1a`. Third review подтвердил неверный provenance: при
+`assessment.id: vm-lab` и заголовке `{#sec-service}` Cloud выдавал ID заголовка
+за ID работы. Core уже устанавливает проверенный `course-assessment-id` до
+вызова adapter validation. Контекст теперь использует его первым, затем
+явный `assessment.id`, затем прежний fallback на первый Header.
+
+RED → GREEN на обеих версиях Quarto: новый `tests/native-context.ts` проходит
+реальную installed/native цепочку. RED сохранял `CLOUD005_declaredVm`, но
+выдавал `связано: объект=sec-service, поле=cloud.virtual-machines` вместо
+`vm-lab`. GREEN проверяет VM-отказ, отказ source.file prepare, документ без
+отдельного заголовка и успешный исправленный input. Регрессия подключена к
+штатному `tests/check.ts`, поэтому не выпадает из последующих проверок CI.
+
+Затронутые `native-model`, `native-ordinary`, `check` — exit 0 на Quarto
+1.10.18 и 1.11.5. Deno fmt --check и git diff --check — exit 0. Полная матрица
+vocabulary/demo не повторялась: CUE, словарь, action/VM/membership/activation
+predicates, аргументы CUE, transport fields и demo не менялись. Логи RED/GREEN
+и затронутых suites: `evidence/cloud/fix-round1/` вне репозитория расширения.
+
+Ruling: полученный от Core проверенный ID приоритетен — исходная работа может
+иметь другой Header ID или не иметь Header в native AST. Fallback сохраняется
+для маршрута без этого метаполя. Цена ошибки: недостоверный/отсутствующий ID в
+сообщении; это теперь ловит реальная native-регрессия. Новые ID, pins, versions,
+source refs и remote-действия не добавлялись. M1 исправлен; финальное scoped
+re-review остаётся координатору.

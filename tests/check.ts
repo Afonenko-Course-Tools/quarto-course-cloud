@@ -1,3 +1,4 @@
+import { verifyNativeContext } from "./native-context.ts";
 import {
   renderNative,
   selectedDocument,
@@ -61,6 +62,7 @@ async function exists(path: string) {
 }
 
 try {
+  await verifyNativeContext(core, repo);
   await copy(join(repo, "examples/course"), root, { overwrite: true });
   // A clean checkout has no installed payload/cache; local copies must match it.
   for (const name of ["_extensions", "_generated", "_book", ".quarto"]) {

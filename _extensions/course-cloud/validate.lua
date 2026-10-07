@@ -8,9 +8,14 @@ function M.validate(doc)
     end
   end
   local value = native.read(doc)
-  local work
-  for _, block in ipairs(doc.blocks) do
-    if block.t == "Header" and block.identifier ~= "" then work = block.identifier; break end
+  local work = doc.meta["course-assessment-id"] and pandoc.utils.stringify(doc.meta["course-assessment-id"])
+  if not work or work == "" then
+    work = doc.meta.assessment and doc.meta.assessment.id and pandoc.utils.stringify(doc.meta.assessment.id)
+  end
+  if not work or work == "" then
+    for _, block in ipairs(doc.blocks) do
+      if block.t == "Header" and block.identifier ~= "" then work = block.identifier; break end
+    end
   end
   local function exerciseContext(exercise)
     local related = pandoc.List()
