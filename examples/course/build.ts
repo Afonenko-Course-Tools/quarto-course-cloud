@@ -18,7 +18,7 @@ for (const owner of ["", "Afonenko-Course-Tools/"]) {
     if (!(e instanceof Deno.errors.NotFound)) throw e;
   }
 }
-if (!core) throw Error("Installed Core required");
+if (!core) throw Error("Необходимо установить ядро курса Core");
 const checked = await new Deno.Command("quarto", {
   args: ["run", join(core, "entrypoints/check.ts"), ".", "full"],
   stdout: "inherit",
@@ -37,7 +37,7 @@ if (
   selected.result.model.exercises.length !== 1 ||
   selected.result.model.exercises[0].extensions.cloud.steps.length !== 2
 ) {
-  throw Error("Selected Cloud source export duplicated or lost exercise steps");
+  throw Error("Выбранный экспорт Cloud потерял или продублировал шаги задания");
 }
 
 const revision = await new Deno.Command("git", {
@@ -55,8 +55,8 @@ await Deno.writeTextFile(
           ? new TextDecoder().decode(revision.stdout).trim()
           : ""),
       sourceDirty: Deno.env.get("DEMO_SOURCE_DIRTY") === "true",
-      extensionVersion: "2.1.0",
-      dependencies: { "quarto-course": "3.0.0" },
+      extensionVersion: "2.1.1",
+      dependencies: { "quarto-course": "3.0.2" },
       projection: "full",
       verification: "local installed native build",
       livePlatformVerified: false,

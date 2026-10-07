@@ -1,5 +1,5 @@
 import { join } from "node:path";
-// Explicit caller: only a successful native process permits current-run consumption.
+// Явный вызывающий код использует результаты только успешного native-процесса.
 const profile = Deno.args[0] || "student";
 if (!["student", "full"].includes(profile)) {
   throw new Error("Профиль: student или full");
@@ -30,7 +30,7 @@ for (const owner of ["", "Afonenko-Course-Tools/"]) {
     if (!(e instanceof Deno.errors.NotFound)) throw e;
   }
 }
-if (!core) throw Error("Installed Core required");
+if (!core) throw Error("Необходимо установить ядро курса Core");
 const checked = await new Deno.Command(Deno.env.get("QUARTO") || "quarto", {
   args: ["run", join(core, "entrypoints/check.ts"), ".", profile],
   stdout: "inherit",
