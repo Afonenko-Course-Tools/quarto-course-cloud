@@ -120,7 +120,7 @@
   },
   {
     "sourcePath": "/home/tolya/course-tools/quarto-course-cloud/examples/course/_book/full/BUILD.json",
-    "snapshot": "docs/history/2026-10-08-preflight/ignored-snapshot/examples/course/_book/full/BUILD.json",
+    "snapshot": "docs/history/2026-10-08-preflight/ignored-snapshot/cloud-full-BUILD.json",
     "bytes": 341,
     "sha256": "03cb3279dbe2cdbbc64440685a8fd2787365645ba62e42acc921867add43daf9",
     "status": "historical-ignored"
