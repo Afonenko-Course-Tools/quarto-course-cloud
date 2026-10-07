@@ -2,7 +2,7 @@
 code-links:
   - text: Исходники примера
     icon: github
-    href: https://github.com/Afonenko-Course-Tools/quarto-course-cloud/tree/v2.1.0/examples/course
+    href: https://github.com/Afonenko-Course-Tools/quarto-course-cloud/tree/demo-20261007-ru1/examples/course
 ---
 
 # О курсе {.unnumbered #sec-intro}

@@ -1,13 +1,26 @@
-# Native Cloud demo group
+# Демонстрационный курс Cloud
 
-Install pinned dependencies in this directory, then build the complete group:
+В этом каталоге установите закреплённые зависимости и соберите готовый пример:
 
 ```sh
-quarto add Afonenko-Course-Tools/quarto-course@v3.0.0 --no-prompt
-quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.0 --no-prompt
+quarto add Afonenko-Course-Tools/quarto-course@v3.0.2 --no-prompt
+quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.1 --no-prompt
 quarto run build.ts
 ```
 
-The full web output is `_book/full`, with `index.html` and `BUILD.json`.
-The build validates native metadata and selected full-source lab export.
-No Cloud machines or real platform exchange are executed.
+Полная веб-книга появится в `_book/full`: точка входа `index.html`, сведения о
+сборке — `BUILD.json`. Пример содержит две виртуальные машины, два шага и
+внешний файл проверки `projects/service/check.sh`.
+
+`build.ts` выполняет native render, после его успешного завершения вызывает
+явную проверку полной модели Core и проверяет выбранный экспорт исходников
+лабораторной `sec-lab-01`. Обычный render проверяет данные входных документов;
+полные междокументные правила требуют отдельного вызова Core `check.ts . full`.
+Код действий присутствует в HTML как учебный материал. Сборка не создаёт и
+не запускает виртуальные машины, не выполняет команды действий и не проверяет
+обмен с облачной платформой.
+
+Ссылки «Исходники» ведут к авторскому примеру в репозитории. Публичные
+контрпримеры с ошибочной разметкой не входят в эту книгу; они находятся в
+локальных тестах расширения. [Справочник диагностики](../../docs/diagnostics.md)
+объясняет сообщения автора, CUE и файловой системы.

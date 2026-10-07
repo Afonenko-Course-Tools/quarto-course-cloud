@@ -9,8 +9,8 @@
 Обычный native render использует Quarto 1.10.18/1.11.5 и CUE. CI проверяет Quarto 1.10.18 и 1.11.5. Python, Node.js и отдельная установка Deno не требуются. Рабочий путь должен быть без пробелов из-за разбора команд сборки в Quarto; кириллица допустима.
 
 ```sh
-quarto add Afonenko-Course-Tools/quarto-course@v3.0.0
-quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.0
+quarto add Afonenko-Course-Tools/quarto-course@v3.0.2
+quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.1
 ```
 
 В `_quarto.yml`:
@@ -90,8 +90,8 @@ quarto run _extensions/Afonenko-Course-Tools/course-core/entrypoints/check.ts . 
 
 ```sh
 cd examples/course
-quarto add Afonenko-Course-Tools/quarto-course@v3.0.0 --no-prompt
-quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.0 --no-prompt
+quarto add Afonenko-Course-Tools/quarto-course@v3.0.2 --no-prompt
+quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.1 --no-prompt
 quarto run build.ts
 ```
 
@@ -106,6 +106,13 @@ quarto run build.ts
 Правила находятся в `_extensions/course-cloud/spec/cloud.cue`. Адаптер извлекает данные и проверяет авторское описание. Экспорт `_produced.yaml`, запуск машин, настройка сетей и дисков и планирование работы относятся к компилятору и среде исполнения; в этом расширении они не реализованы.
 
 В Git хранятся исходники расширения, правила CUE, QMD и авторские ресурсы. Установленные зависимости в `examples/**/_extensions/` и результаты сборки исключены через `.gitignore`. Адрес GitHub используется только при установке: сборка не привязана к владельцу репозитория или имени рабочего каталога.
+
+## Диагностика
+
+[Русский справочник диагностики](docs/diagnostics.md) описывает существующие ID
+CUE, контекст упражнения/шага/машины и проверку путей к файлам действий.
+Исходный вывод CUE и ошибки файловой системы сохраняются; позиции временного
+JSON не считаются строками QMD.
 
 ## Единый словарь и архитектура
 
@@ -160,4 +167,4 @@ Sidecar документа содержит source, view, format и profiles. Pr
 
 ## Версии и обновление
 
-Релиз `v2.1.0` соответствует версии в `_extension.yml`. Устанавливайте явный тег, как в команде выше, и сохраняйте установленные файлы `_extensions` в Git курса. Для обновления установите следующий опубликованный тег через `quarto add`, проверьте diff и выполните проверки курса. Опубликованные теги неизменяемы: исправления получают новую версию и новый тег.
+Релиз `v2.1.1` соответствует версии в `_extension.yml`. Устанавливайте явный тег, как в команде выше, и сохраняйте установленные файлы `_extensions` в Git курса. Для обновления установите следующий опубликованный тег через `quarto add`, проверьте diff и выполните проверки курса. Опубликованные теги неизменяемы: исправления получают новую версию и новый тег.
