@@ -9,8 +9,8 @@
 Обычный native render использует Quarto 1.10.18/1.11.5 и CUE. CI проверяет Quarto 1.10.18 и 1.11.5. Python, Node.js и отдельная установка Deno не требуются. Рабочий путь должен быть без пробелов из-за разбора команд сборки в Quarto; кириллица допустима.
 
 ```sh
-quarto add Afonenko-Course-Tools/quarto-course@v3.0.0
-quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.0
+quarto add Afonenko-Course-Tools/quarto-course@v3.0.2
+quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.1
 ```
 
 В `_quarto.yml`:
@@ -90,8 +90,8 @@ quarto run _extensions/Afonenko-Course-Tools/course-core/entrypoints/check.ts . 
 
 ```sh
 cd examples/course
-quarto add Afonenko-Course-Tools/quarto-course@v3.0.0 --no-prompt
-quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.0 --no-prompt
+quarto add Afonenko-Course-Tools/quarto-course@v3.0.2 --no-prompt
+quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.1 --no-prompt
 quarto run build.ts
 ```
 
@@ -167,4 +167,4 @@ Sidecar документа содержит source, view, format и profiles. Pr
 
 ## Версии и обновление
 
-Релиз `v2.1.0` соответствует версии в `_extension.yml`. Устанавливайте явный тег, как в команде выше, и сохраняйте установленные файлы `_extensions` в Git курса. Для обновления установите следующий опубликованный тег через `quarto add`, проверьте diff и выполните проверки курса. Опубликованные теги неизменяемы: исправления получают новую версию и новый тег.
+Релиз `v2.1.1` соответствует версии в `_extension.yml`. Устанавливайте явный тег, как в команде выше, и сохраняйте установленные файлы `_extensions` в Git курса. Для обновления установите следующий опубликованный тег через `quarto add`, проверьте diff и выполните проверки курса. Опубликованные теги неизменяемы: исправления получают новую версию и новый тег.

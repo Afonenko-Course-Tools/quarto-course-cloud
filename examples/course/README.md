@@ -3,8 +3,8 @@
 В этом каталоге установите закреплённые зависимости и соберите готовый пример:
 
 ```sh
-quarto add Afonenko-Course-Tools/quarto-course@v3.0.0 --no-prompt
-quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.0 --no-prompt
+quarto add Afonenko-Course-Tools/quarto-course@v3.0.2 --no-prompt
+quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.1 --no-prompt
 quarto run build.ts
 ```
 
