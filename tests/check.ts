@@ -33,7 +33,7 @@ async function run(
         : result.ok,
       result.text,
     );
-    return;
+    return result.text;
   }
   const result = await new Deno.Command(quarto, {
     args,
@@ -262,10 +262,28 @@ ${hiddenLocal}
 `;
   const cases = [
     {
+      name: "шаг без обязательного key",
+      task: task.replace(' key="configure"', ""),
+      lab,
+      error: "key",
+      context: [
+        "источник=tasks/index.qmd",
+        "объект=exr-service",
+        "поле=extensions.cloud",
+        "cue",
+      ],
+    },
+    {
       name: "скрытая локальная VM без cloud.virtual-machines",
       task,
       lab: hiddenMissingMachines,
       error: "CLOUD005_declaredVm",
+      context: [
+        "источник=labs/01.qmd",
+        "объект=exr-hidden",
+        "undeclared",
+        "hidden",
+      ],
     },
     {
       name: "скрытая локальная необъявленная VM",
@@ -275,6 +293,12 @@ ${hiddenLocal}
         hiddenLocal + "::: {.task-items}",
       ).replace("1. @exr-service", "1. @exr-service\n2. @exr-hidden"),
       error: "CLOUD005_declaredVm",
+      context: [
+        "источник=labs/01.qmd",
+        "объект=exr-hidden",
+        "undeclared",
+        "hidden",
+      ],
     },
     {
       name: "скрытая неверная фаза",
@@ -294,6 +318,12 @@ PRIVATE-INVALID
       ),
       lab,
       error: "phase",
+      context: [
+        "источник=tasks/index.qmd",
+        "объект=exr-service",
+        "поле=extensions.cloud",
+        "hidden",
+      ],
     },
     {
       name: "скрытый внешний symlink",
@@ -311,25 +341,41 @@ PRIVATE-INVALID
 `,
       ),
       lab,
-      error: "Путь выходит за пределы курса",
+      error: "CLOUD.ACTION_SOURCE_INVALID",
+      context: [
+        "источник=tasks/index.qmd",
+        "объект=exr-service",
+        "поле=source.file",
+        "hidden",
+        "client",
+        "/projects/service/escape.sh",
+      ],
     },
     {
       name: "отсутствие проверки",
       task: task.replace('phase="check"', 'phase="solution"'),
       lab,
-      error: "CLOUD001",
+      error: "CLOUD001_check",
+      context: [
+        "источник=tasks/index.qmd",
+        "объект=exr-service",
+        "configure",
+        "host",
+      ],
     },
     {
       name: "повтор ключа шага",
       task: task.replace('key="client"', 'key="configure"'),
       lab,
-      error: "CLOUD004",
+      error: "CLOUD004_uniqueSteps",
+      context: ["источник=tasks/index.qmd", "объект=exr-service"],
     },
     {
       name: "необъявленная машина",
       task,
       lab: lab.replace("    client:\n      template: ubuntu-client\n", ""),
-      error: "CLOUD005",
+      error: "CLOUD005_declaredVm",
+      context: ["sec-lab-01", "exr-service", "client"],
     },
     {
       name: "отсутствие внешнего файла",
@@ -338,7 +384,14 @@ PRIVATE-INVALID
         "/projects/service/missing.sh",
       ),
       lab,
-      error: "missing.sh",
+      error: "ExternalToolFailure",
+      context: [
+        "источник=tasks/index.qmd",
+        "объект=exr-service",
+        "поле=source.file",
+        "missing.sh",
+        "NotFound",
+      ],
     },
   ];
   for (const item of cases) {
@@ -354,7 +407,13 @@ PRIVATE-INVALID
       join(root, "_generated/course-spec/course.json"),
       JSON.stringify(model),
     );
-    await run(render, item.error);
+    const failure = await run(render, item.error);
+    for (const context of item.context) {
+      assert(
+        failure?.includes(context),
+        `Потерян контекст ${context}: ${failure}`,
+      );
+    }
     assert(
       !await exists(modelPath()),
       `Сохранена устаревшая модель: ${item.name}`,
