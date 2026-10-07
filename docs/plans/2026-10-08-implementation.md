@@ -1,6 +1,12 @@
+---
+type: plan
+component: cloud
+status: accepted-next
+---
+
 # Cloud: план владельца
 
-Статус: следующий этап, реализация не начата. Выполнять пункт 11 и затем
+Статус: подготовка шагов 1–2 выполнена; новое поведение ещё не реализовано. Выполнять пункт 11 и затем
 пункты 12–13/17–18 [линейного плана](../../../quarto-course/docs/plans/2026-10-08-course-tools-implementation.md).
 [Целевой контракт Core](../../../quarto-course/spec/authoring-model-next.md)
 задаёт поля банка/работ/назначений. Quarto 1.11.5 / CUE 0.17.1;
@@ -10,7 +16,7 @@
 
 Обновить `_extensions/course-cloud/{native,validate,actions,steps,contract}.lua`, `_extensions/course-cloud/validate-paths.ts`, filter только для уже известного context; сверить `_extensions/course-cloud/spec/cloud.cue`, `contract.json`, `tools/sync-contract.ts`. Несколько `.task-items` собираются в одно назначение с stage/workmode/requirement; activation остаётся явным bank/Core маршрутом, ordinary render не приобретает mandatory bank поля. CUE semantic predicates не дублировать в Lua/TS. Native wrapper получает known source/exercise/work/step/vm/field, сохраняет CUE stderr/cause; path guards получают CLOUD.ACTION_SOURCE_INVALID. CLOUD001…CLOUD007 и CORE.ADAPTER_INVALID сохраняются; IO refusal не описывать как доказанное нарушение учебного правила. Дополнительный formatter/registry ради нескольких строк не нужен.
 
-Обновить `README.md`, создать `docs/diagnostics.md`, owner plan, `tests/{check,native-model,native-ordinary}.ts`, `examples/course` README/configs/QMD. Проверки: `quarto run tools/sync-contract.ts --check`, `quarto run tests/check.ts /home/tolya/course-tools/quarto-course`, аналогично `native-model`, `native-ordinary`, затем `CORE=/home/tolya/course-tools/quarto-course bash tools/check-demo.sh`. Проверить undeclared VM/missing field/action path escape/missing source/native CUE refusal. HTML и CUE проверка не заявляют реальное VM исполнение.
+Обновить `README.md`, уточнить существующий `docs/diagnostics.md`, owner plan, `tests/{check,native-model,native-ordinary}.ts`, `examples/course` README/configs/QMD. Проверки: `quarto run tools/sync-contract.ts --check`, `quarto run tests/check.ts /home/tolya/course-tools/quarto-course`, аналогично `native-model`, `native-ordinary`, затем `CORE=/home/tolya/course-tools/quarto-course bash tools/check-demo.sh`. Проверить undeclared VM/missing field/action path escape/missing source/native CUE refusal. HTML и CUE проверка не заявляют реальное VM исполнение.
 
 ## Завершение
 
@@ -24,3 +30,60 @@
 не заменять. Финальная очистка веток только после общего маршрута:
 main + служебная gh-pages, если используется, + heads OPEN automatic PR.
 Здесь сохранить commit/PR/tag/SHA, фактические проверки и ссылки на готовые assets.
+
+
+## Подготовка шагов 1–2 — 8 октября 2026
+
+Общий старт: 02:36 Europe/Minsk; deadline: 11:36 (9 часов). Root назначил
+документальной задаче reasoning ultra; модель исполнителя не менялась.
+
+- Рабочая ветка: `feat/authoring-model-20261008`, создана в исходном checkout
+  перед сохранением материалов; пользовательский `main` не сбрасывался.
+- Preservation commit: `18f2b0819524d38f155bd4aae18009f6d9579bb1`. Dirty/untracked планы сохранены до
+  включения свежего `origin/main` `0b40976eba946e626b5f70794dad2ddbc4b300ad`. Этот upstream соответствует
+  опубликованному `v2.1.1` и является предком текущего рабочего дерева.
+- [Карта истории, source provenance и восстановление](../history-index.md).
+  Полные snapshot/source-state/SHA256 карты сохранены в Git commit
+  `3a7bfb8311cb64bc3d7996bab4297af401e195cf`, затем убраны из active tree после координации.
+  Исходники root остались без изменений; локальные и upstream owner планы
+  сохранены отдельно с provenance refs.
+- Один исходный worktree; существующие local heads не имеют уникальных
+  коммитов относительно свежего origin/main. Ветки, теги и Releases сохранены.
+- Ignored native `_book/full` оставлен на месте; substantive `BUILD.json` сохранён (sourceDirty:true), HTML/assets не считаются авторскими материалами.
+- CI и demo installation: Core `v3.0.2`, Cloud `v2.1.1`.
+- README выделяет [текущий индекс](../../spec/index.md) и контракт; `main`
+  явно unreleased. Типы/владельцы/status отделяют current и accepted-next.
+
+OPEN PR: нет по свежему gh pr list; новые PR на этом этапе не создавались.
+Tool Release `v2.1.1` подтверждён свежим `gh release list`, draft/prerelease
+false. Демонстрации `demo-20261007-ru1` подтверждены тем же read-only запросом.
+
+Фактическая проверка подготовки: свежий `git fetch origin --prune --tags`,
+`gh pr list`, `gh release list`; SHA256 и bytes каждого сохранённого snapshot;
+`git diff --check`/`git diff --cached --check`; ancestry `origin/main` и
+отсутствие unresolved merge markers; локальные ссылки README/index/контрактов.
+Runtime tests и CI здесь не запускались: код импортирован из опубликованного
+upstream и не изменён исполнителем. Старые evidence/CI не принимаются за новые
+проверки. Свежая runtime матрица принадлежит последующему пункту владельца.
+
+Ruling: свежий upstream уже содержит диагностику 7 октября; дальнейший шаг
+проверяет и дополняет реальный код, а не повторяет старый unchecked план.
+Конфликтующие owner планы сохранены в обеих версиях; active historical текст
+берётся из свежего upstream, а нынешний маршрут — только этот plan/accepted-next.
+Цена ошибки — лишняя история, без потери исходных документов.
+
+Ruling: после координации сохранённые historical snapshots и старые owner
+plans/probes убраны из active tree; восстановимые SHA/paths указаны в карте истории.
+Root и пользовательские worktrees не удалялись. Текущие spec/docs и план 8 октября
+сохранены; transferred decisions закреплены в current/accepted-next контрактах.
+
+Блокирующих расхождений для подготовки нет. Baseline ещё содержит Quarto 1.10.x
+в workflows и descriptor; удалить одновременно с runtime/README/examples на пункте владельца.
+Следующий шаг ждёт новый текущий Core contract/Body; новые поля не заявлены
+поддерживаемыми данным preflight. Merge в shared main, push, CI, release и
+публикация не выполнялись.
+
+Проверка Git snapshot blobs выявила, что ignore `**/_book/` исключал архивную
+копию BUILD.json. До cleanup файл сохранён в neutral path
+`ignored-snapshot/cloud-full-BUILD.json`; все 21 bytes/SHA256 проверены через
+`git show` из исправленного preservation commit. Исходный ignored файл сохранён.
