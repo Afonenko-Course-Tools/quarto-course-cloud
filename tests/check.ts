@@ -103,8 +103,17 @@ try {
   assert(
     model.exercises[0].purpose === "independent-study" &&
       model.exercises[0].difficulty === "introductory" &&
+      model.exercises[0].time === 35 &&
+      model.exercises[0].statementVisibility === "open" &&
       model.exercises[0].sourceTopic.id === "sec-service-topic",
     "Потеряны назначение, сложность или авторская тема Cloud",
+  );
+  assert(
+    JSON.stringify(model.assessments[0].items) === '["exr-service"]' &&
+      model.assessments[0].assignments["exr-service"].workMode === "pair" &&
+      model.assessments[0].assignments["exr-service"].requirement === "required" &&
+      model.assessments[0].theoryTime === 10,
+    "Cloud потерял местный состав работы, назначения или время теории",
   );
   const steps = model.exercises[0].extensions.cloud.steps;
   assert(steps.length === 2, "Модель должна содержать оба шага Cloud");
@@ -172,6 +181,35 @@ try {
   const labPath = join(root, "labs/01.qmd");
   const task = await Deno.readTextFile(taskPath);
   const lab = await Deno.readTextFile(labPath);
+  // Current student membership is projected; full raw membership remains authoritative.
+  const restricted = `
+:::: {#exr-restricted target="cloud" difficulty="advanced" time="20" statement-visibility="restricted"}
+## Закрытое условие
+RESTRICTED_CLOUD_CONDITION
+
+### Проверка {.cloud-step key="restricted"}
+
+\`\`\`{.sh .cloud-action phase="check" vm="host"}
+echo ready
+\`\`\`
+::::
+`;
+  await Deno.writeTextFile(taskPath, task + restricted);
+  await Deno.writeTextFile(labPath, lab.replace('1. [@exr-service]{work-mode="pair"}', '1. [@exr-service]{work-mode="pair"}\n2. @exr-restricted'));
+  await run(render);
+  const projected = JSON.parse(await Deno.readTextFile(modelPath()));
+  assert(projected.exercises.length === 1 && JSON.stringify(projected.assessments[0].items) === '["exr-service"]', "Student Cloud model retained restricted work membership");
+  const currentRun = JSON.parse(await Deno.readTextFile(join(root, "_generated/course-spec/native-run.json")));
+  const currentWork = currentRun.documents.find((document: { source: string }) => document.source === "labs/01.qmd");
+  assert(JSON.stringify(currentWork.assessment.items) === '["exr-service"]' && !JSON.stringify(currentWork.assessment.assignments).includes("exr-restricted"), "Current native work retained restricted assignment");
+  const studentBank = await Deno.readTextFile(join(root, "_book/student/tasks/index.html"));
+  assert(!studentBank.includes("RESTRICTED_CLOUD_CONDITION"), "Restricted Cloud condition survived student HTML");
+  await run(render, undefined, "full");
+  const fullMembership = JSON.parse(await Deno.readTextFile(modelPath()));
+  assert(fullMembership.exercises.length === 2 && JSON.stringify(fullMembership.assessments[0].items) === '["exr-service","exr-restricted"]', "Full Cloud model lost restricted assignment");
+  await Deno.writeTextFile(taskPath, task);
+  await Deno.writeTextFile(labPath, lab);
+  console.log("ПРОЙДЕНО: текущий Cloud student-состав исключает restricted, full сохраняет назначение");
   const secret = "ЗАКРЫТОЕ-ОБЛАЧНОЕ-ДЕЙСТВИЕ";
   const hidden = task.replace(
     /::::\s*$/,
@@ -235,7 +273,7 @@ ${secret}
 
 ::::: {.content-visible when-profile="full"}
 
-:::: {#exr-hidden target="cloud" course-role="control" difficulty="introductory"}
+:::: {#exr-hidden target="cloud" course-role="control" difficulty="introductory" time="10" statement-visibility="open"}
 ## Закрытая проверка
 
 ### Проверка {.cloud-step key="hidden"}
@@ -248,6 +286,8 @@ echo ready
 
 `;
   const hiddenMissingMachines = `---
+exercise-bank: true
+exercise-statement-visibility: open
 assessment:
   kind: lab
 ---
@@ -290,10 +330,10 @@ ${hiddenLocal}
     {
       name: "скрытая локальная необъявленная VM",
       task,
-      lab: lab.replace(
+      lab: lab.replace("---\n", "---\nexercise-bank: true\nexercise-statement-visibility: open\n").replace(
         "::: {.task-items}",
         hiddenLocal + "::: {.task-items}",
-      ).replace("1. @exr-service", "1. @exr-service\n2. @exr-hidden"),
+      ).replace('1. [@exr-service]{work-mode="pair"}', '1. [@exr-service]{work-mode="pair"}\n2. @exr-hidden'),
       error: "CLOUD005_declaredVm",
       context: [
         "источник=labs/01.qmd",
