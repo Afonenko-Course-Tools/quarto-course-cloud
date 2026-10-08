@@ -1,6 +1,7 @@
 ---
 assessment:
   kind: lab
+  theory-time: 10
 cloud:
   virtual-machines:
     host:
@@ -14,5 +15,5 @@ cloud:
 Изучите @sec-tasks перед началом занятия.
 
 ::: {.task-items}
-1. @exr-service
+1. [@exr-service]{work-mode="pair"}
 :::

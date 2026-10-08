@@ -13,6 +13,7 @@ vocabulary, architecture, reference и plan; `component` указывает вл
 
 | Документ | type | component | status |
 | --- | --- | --- | --- |
+| [Подготовка авторства](../docs/authoring-next.md) | authoring-guide | cloud | accepted-next |
 | [Контракт Cloud](contract.md) | contract | cloud | current |
 | [Словарь адаптера](../_extensions/course-cloud/contract.json) | vocabulary | cloud | current |
 | [VM/action и CUE constraints](../_extensions/course-cloud/spec/cloud.cue) | contract/schema | cloud | current |

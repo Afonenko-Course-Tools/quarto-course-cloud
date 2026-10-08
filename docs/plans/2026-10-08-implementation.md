@@ -87,3 +87,29 @@ Root и пользовательские worktrees не удалялись. Те
 копию BUILD.json. До cleanup файл сохранён в neutral path
 `ignored-snapshot/cloud-full-BUILD.json`; все 21 bytes/SHA256 проверены через
 `git show` из исправленного preservation commit. Исходный ignored файл сохранён.
+
+
+## Подготовка документации пункта 11 — 8 октября 2026
+
+Документационный исполнитель работает по принятым Core решениям; модель не
+менялась. Добавлена [подготовка авторства](../authoring-next.md) `accepted-next`,
+ссылки из README и индекса. Существующие current API/контракты не объявлены
+мигрированными до проверки runtime. Примеры на этой ветке предназначены для
+следующей модели; native ordinary Quarto сохранён вне bank opt-in.
+
+- Свежая проверка: `git diff --check`; 32 локальных Markdown-ссылок
+  README/spec/docs/плана/README примеров существуют; 4 авторских YAML
+  файлов успешно прочитаны. Проверка исключает generated/dependency деревья.
+- Активные примеры не содержат старых kinds exam/handout, solution `for`,
+  fixture sentinel/literal текста и Quarto 1.10.x. Русский lang сохраняется,
+  публичные native проекты задают `fail-if-warnings: true`.
+- Машинные descriptors/workflows и runtime/tests не изменялись этим исполнителем.
+  Старые выпущенные dependency/demo/source pins сохранены как baseline;
+  **новые release pins ожидают решения о версиях и фактических Releases**.
+
+- Статически сверены банковские области: `examples/course` — 1 задач / 1 работ. Для каждой задачи собственные difficulty/time и эффективная open/restricted policy; ID состава существуют, не повторяются, test/practical назначают только restricted. Это проверка разметки, не native AST/render.
+
+Full dependent suites/CI/render против меняющегося Core здесь не запускались.
+Следующий runtime исполнитель выполняет команды выше, проверяет текущие
+student/full outputs и выбранный экспорт, после чего документальная подготовка
+переносится в current README/контракт. Merge/push/release/публикация не выполнены.
