@@ -9,6 +9,11 @@ try {
     registeredTargets: ["manual", adapter],
     exercises: [{
       id: "exr-native",
+      difficulty: "introductory",
+      time: 10,
+      statementVisibility: "open",
+      hasSolution: false,
+      hasPublicSolution: false,
       project: "",
       head: { kind: "Div", level: 0, title: "" },
       body: { "pandoc-api-version": [1, 23, 1], meta: {}, blocks: [] },
@@ -118,6 +123,20 @@ try {
   );
   await vet(exercise(), "#CloudExercise");
   await vet(assessment([action("host", "prepare")]), "#CloudAssessment");
+
+  // Cloud joins local Course items to local exercise IDs; Body keys are unrelated.
+  for (const kind of ["lab", "seminar", "practical", "test"]) {
+    await vet({
+      ...model,
+      exercises: [{ ...model.exercises[0], target: "cloud", extensions: { cloud: exercise() }, statementVisibility: kind === "test" || kind === "practical" ? "restricted" : "open" }],
+      assessments: [{
+        id: "native-work", kind, title: "Работа", source: "work.qmd",
+        body: model.exercises[0].body, items: ["exr-native"],
+        assignments: { "exr-native": { requirement: "optional", workMode: "pair", stage: "homework" } },
+        memberContainers: 1, memberKinds: ["OrderedList"], memberSizes: [1], extensions: { cloud: assessment() },
+      }],
+    }, "#Course");
+  }
 
   // Exercise the real Lua wrapper; context is optional and never alters CUE input.
   const extension = join(Deno.cwd(), "_extensions/course-cloud");
@@ -258,7 +277,7 @@ end}}
   ]);
   await validatePath("/check.sh");
   console.log(
-    "Нативное упражнение без владельца, target, роли, сложности и исходной темы допустимо с " +
+    "Банковское упражнение с собственными difficulty/time и политикой условия допустимо без target и роли с " +
       adapter,
   );
 } finally {

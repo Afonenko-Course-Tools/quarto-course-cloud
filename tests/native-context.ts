@@ -39,7 +39,7 @@ cloud:
 ---
 
 ${heading}
-:::: {#exr-service target="cloud"}
+:::: {#exr-service target="cloud" difficulty="introductory" time="10"}
 ## Проверка службы
 
 ### Настройка {.cloud-step key="configure"}
@@ -69,6 +69,8 @@ ${
   pre-render: _extensions/course-core/entrypoints/pre.ts
   post-render: _extensions/course-core/entrypoints/post.ts
 format: html
+exercise-bank: true
+exercise-statement-visibility: open
 lang: ru
 course:
   id: work-context
