@@ -18,7 +18,7 @@ vocabulary, architecture, reference и plan; `component` указывает вл
 | [VM/action и CUE constraints](../_extensions/course-cloud/spec/cloud.cue) | contract/schema | cloud | current |
 | [Диагностика](../docs/diagnostics.md) | reference | cloud | current |
 | [Авторская модель Core](../../quarto-course/spec/index.md) | specification/index | course-core | current |
-| [План владельца](../docs/plans/2026-10-08-implementation.md) | plan | cloud | in-progress |
+| [Результат реализации](../docs/releases/2026-10-08-implementation.md) | implementation-report | cloud | historical |
 | [Карта сохранённой истории](../docs/history-index.md) | history-index | cloud | current |
 
 Cloud владеет extensions.cloud, VM/action/step декларациями и их CUE predicates. Core владеет банком, работами и assignments. Исполнение VM и экспорт _produced.yaml остаются вне реализованной поставки.
