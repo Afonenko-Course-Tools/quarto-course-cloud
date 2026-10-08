@@ -1,26 +1,32 @@
 # Облачные задания курса
 
 Действующие правила: [индекс спецификаций](spec/index.md) и [контракт Cloud](spec/contract.md).
-Согласованные будущие изменения отмечены `accepted-next`; `main` до следующего выпуска — `unreleased`.
+Версия данного ref определяется descriptor; контракт и документация выпуска
+читаются из того же тега, что и код. Изменения main после выпущенного тега —
+**unreleased**. Минимум — Quarto 1.11.5; при использовании Core требуется CUE 0.17.1.
 
 Расширение `course-cloud` описывает виртуальные машины, шаги работы и проверку облачных заданий в Quarto. Оно дополняет текущую спецификацию ядра курса: ядро собирает общую модель курса, а адаптер добавляет раздел `extensions.cloud` и проверяет его правилами CUE. Результат — проверенное описание и HTML курса. Создание виртуальных машин, выполнение действий и экспорт `_produced.yaml` в эту поставку не входят.
 
 Ядро, адаптер и конфигурация курса обновляются совместно. В YAML не указывают версию схемы; старые формы описания не поддерживаются. Номер в `_extension.yml` служит метаданными устанавливаемого пакета.
 
-[Подготовка следующего authoring-контракта](docs/authoring-next.md) содержит правила нового банка и назначения. Они остаются `accepted-next` до проверки совместного runtime; опубликованные pins ниже пока сохраняются.
-
 ## Подключение
 
-Обычный native render использует Quarto 1.10.18/1.11.5 и CUE. CI проверяет Quarto 1.10.18 и 1.11.5. Python, Node.js и отдельная установка Deno не требуются. Рабочий путь должен быть без пробелов из-за разбора команд сборки в Quarto; кириллица допустима.
+Native render использует Quarto 1.11.5 и CUE 0.17.1. Python, Node.js и отдельная
+установка Deno не требуются. Для рабочего пути без пробелов сохраняется текущая
+граница native команд. В Quarto 1.11.5 отдельно воспроизведён upstream отказ
+`recoverEncode` на кириллическом пути; временное решение — путь без кириллицы.
+Это ограничение Quarto не объявляется исправленным адаптером.
 
 ```sh
-quarto add Afonenko-Course-Tools/quarto-course@v3.0.2
-quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.1
+quarto add Afonenko-Course-Tools/quarto-course@v4.0.0
+quarto add Afonenko-Course-Tools/quarto-course-cloud@v3.0.0
 ```
 
 В `_quarto.yml`:
 
 ```yaml
+lang: ru
+fail-if-warnings: true
 project:
   pre-render:
     - _extensions/Afonenko-Course-Tools/course-core/entrypoints/pre.ts
@@ -39,7 +45,7 @@ filters: [course-core, course-cloud]
 ````qmd
 ## Работа со службой {#sec-service}
 
-:::: {#exr-service course-role="independent-study" difficulty="introductory" target="cloud"}
+:::: {#exr-service course-role="independent-study" difficulty="introductory" time="35" target="cloud"}
 ## Состояние службы
 
 ### Настройка {.cloud-step key="configure"}
@@ -50,6 +56,16 @@ filters: [course-core, course-cloud]
 ```
 ::::
 ````
+
+Каноническое задание объявлено в native области `exercise-bank: true` с
+`exercise-statement-visibility: open|restricted`. У него собственные
+`difficulty` и `time`; `target="cloud"` задаёт привязку к адаптеру.
+
+```yaml
+# tasks/_metadata.yml
+exercise-bank: true
+exercise-statement-visibility: open
+```
 
 Задание — блок с идентификатором `exr-…` и `target="cloud"`. Его первый элемент — заголовок. Заголовок с классом `.cloud-step` начинает шаг; `key` задаёт уникальный в пределах задания ключ. Обычные подзаголовки шагов не создают.
 
@@ -95,8 +111,8 @@ quarto run _extensions/Afonenko-Course-Tools/course-core/entrypoints/check.ts . 
 
 ```sh
 cd examples/course
-quarto add Afonenko-Course-Tools/quarto-course@v3.0.2 --no-prompt
-quarto add Afonenko-Course-Tools/quarto-course-cloud@v2.1.1 --no-prompt
+quarto add Afonenko-Course-Tools/quarto-course@v4.0.0 --no-prompt
+quarto add Afonenko-Course-Tools/quarto-course-cloud@v3.0.0 --no-prompt
 quarto run build.ts
 ```
 
@@ -135,7 +151,9 @@ JSON не считаются строками QMD.
 
 ## Текущий авторский маршрут Core
 
-`course-role` и `difficulty` необязательны; явно указанные значения проверяются.
+Банк включается явно; каноническая задача имеет собственные обязательные
+`difficulty` и положительное целое `time`, эффективную open/restricted политику.
+`course-role` необязателен; явно указанное значение проверяется.
 Нативные упражнения в обычных материалах не требуют export owner или target.
 Выбранная работа назначает задания общим списком `.task-items`; в лабораторной
 и контрольной они обязательны по умолчанию, `requirement="optional"` задаётся
@@ -172,4 +190,7 @@ Sidecar документа содержит source, view, format и profiles. Pr
 
 ## Версии и обновление
 
-Последний опубликованный tool release — `v2.1.1`. Версия определяется `_extensions/course-cloud/_extension.yml` того же Git ref; документация выпуска читается из того же тега. `main` до нового выпуска — `unreleased`, совпадение номера с предыдущим тегом не означает новый выпуск. Устанавливайте явный тег, как в команде выше, и сохраняйте установленные файлы `_extensions` в Git курса. Для обновления установите следующий опубликованный тег через `quarto add`, проверьте diff и выполните проверки курса. Опубликованные теги неизменяемы: исправления получают новую версию и новый тег.
+Версия определяется descriptor того же Git ref. Устанавливайте точный тег
+из команды выше; документация и код выбранного выпуска читаются из одного ref.
+Сохраните установленные `_extensions` в Git курса; при обновлении просмотрите diff и выполните проверки курса. Опубликованные
+теги неизменяемы: исправления получают новую версию и новый тег.

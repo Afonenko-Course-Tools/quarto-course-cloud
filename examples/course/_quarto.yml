@@ -12,7 +12,7 @@ book:
   repo-url: https://github.com/Afonenko-Course-Tools/quarto-course-cloud
   repo-subdir: examples/course
   repo-actions: [source]
-  repo-branch: demo-20261007-ru1
+  repo-branch: v3.0.0
   chapters:
     - index.qmd
     - tasks/index.qmd

@@ -63,8 +63,21 @@ Owner plans до origin update и из опубликованного origin/mai
 run/outputs; независимые ID/QRC адреса; owner containment до cleanup; закрытые
 тела/ресурсы не включаются в публичный payload; внешний exit/tool/потоки/cause
 сохраняются; общей runtime/report/registry надстройки нет. Их нормативные
-владельцы связаны из текущего spec index. Новые bank/assignments поля остаются
-accepted-next до реализации Core/потребителей.
+владельцы связаны из текущего spec index. Это описание фиксирует историческое
+состояние подготовки; актуальные правила
+банка/assignments теперь находятся в текущих контрактах Core и владельца.
 
 Ignored BUILD.json — прежняя full provenance `sourceDirty:true`, Cloud 2.1.0/Core 3.0.0;
 не новая успешная сборка. Native `_book` HTML/assets оставлены на месте.
+
+## Подготовка авторства 8 октября
+
+Переходный `docs/authoring-next.md` перенесён в действующие тематические документы.
+Точные исходные bytes сохранены в Git: commit `24984818a5565bf9324b4b39f0d307246a73a072`,
+blob `a1c456f31cb9e29dbe3ff7a7666f1f1ed40f769b`. Восстановление без изменения рабочего дерева:
+
+```sh
+git show 24984818a5565bf9324b4b39f0d307246a73a072:docs/authoring-next.md
+```
+
+[Исходная подготовка](https://github.com/Afonenko-Course-Tools/quarto-course-cloud/blob/24984818a5565bf9324b4b39f0d307246a73a072/docs/authoring-next.md) остаётся историей этого владельца.

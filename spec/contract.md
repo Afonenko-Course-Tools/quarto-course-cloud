@@ -35,3 +35,24 @@ Path guards сохраняют containment и реальные IO cause. `CLOUD0
 на своих границах; DocumentResult без успешного завершения writer/hooks не
 подтверждает успешность всего native процесса. Подключение и примеры —
 [README](../README.md), известные IDs — [диагностика](../docs/diagnostics.md).
+
+## Текущая авторская модель Core
+
+Банк задаётся native `exercise-bank: true` и явной политикой условия. Каждая
+каноническая задача имеет собственные difficulty/time; target не включает банк.
+Обычные native Quarto упражнения вне области банка не получают этих требований.
+Страницы работ могут находиться рядом, вне банковской области.
+
+Виды работы — `lab|seminar|practical|test`. Несколько `.task-items` образуют
+один состав; stage списка необязателен, requirement/work-mode задаются на Span
+ссылки. Test/practical назначают только restricted задачи; открытые разборы
+размещаются в `.assessment-preview` вне состава. Student удаляет restricted
+условия, ссылки назначения и закрытые решения; full сохраняет полную декларацию.
+Роль demonstration открывает решение только open задачи с фактическим решением.
+
+Cloud читает текущую локальную Course-модель и не потребляет Body. Native CUE
+сохраняет локальные exercise.id/assessment.items; qualified Body assignments
+сюда не переносятся. Core владеет временем и общими predicates назначений.
+VM/prepare/actions остаются отдельными правилами Cloud. `.cloud-step` сохраняется
+как платформенный шаг. [Пример](../examples/course/README.md) проверяет две VM,
+два шага и выбранный источник работы без запуска действий.

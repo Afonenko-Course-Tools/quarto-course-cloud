@@ -13,25 +13,17 @@ vocabulary, architecture, reference и plan; `component` указывает вл
 
 | Документ | type | component | status |
 | --- | --- | --- | --- |
-| [Подготовка авторства](../docs/authoring-next.md) | authoring-guide | cloud | accepted-next |
 | [Контракт Cloud](contract.md) | contract | cloud | current |
 | [Словарь адаптера](../_extensions/course-cloud/contract.json) | vocabulary | cloud | current |
 | [VM/action и CUE constraints](../_extensions/course-cloud/spec/cloud.cue) | contract/schema | cloud | current |
 | [Диагностика](../docs/diagnostics.md) | reference | cloud | current |
-| [Целевой authoring contract Core](../../quarto-course/spec/authoring-model-next.md) | contract | core | accepted-next |
-| [План владельца](../docs/plans/2026-10-08-implementation.md) | plan | cloud | accepted-next |
+| [Авторская модель Core](../../quarto-course/spec/index.md) | specification/index | course-core | current |
+| [План владельца](../docs/plans/2026-10-08-implementation.md) | plan | cloud | in-progress |
 | [Карта сохранённой истории](../docs/history-index.md) | history-index | cloud | current |
 
 Cloud владеет extensions.cloud, VM/action/step декларациями и их CUE predicates. Core владеет банком, работами и assignments. Исполнение VM и экспорт _produced.yaml остаются вне реализованной поставки.
 
-Версия пакета определяется только
-[`_extension.yml`](../_extensions/course-cloud/_extension.yml) **того же Git ref**.
-Последний проверенный опубликованный tool tag — `v2.1.1`; его descriptor
-содержит `2.1.1`. `main` до нового выпуска — **unreleased**, даже если
-число в descriptor пока совпадает с предыдущим выпуском. Документация выпуска
-читается из того же immutable tag, рабочий план не заменяет контракт этого tag.
-
-Новая модель банка/assignments и минимум Quarto 1.11.5 / CUE 0.17.1 принимаются
-по `accepted-next` одновременно с кодом, fixtures, README и выпуском владельца.
-Этот индекс сам по себе не включает новый синтаксис. Существующие машинные
-дескрипторы/workflow baseline пока сохраняются до соответствующего runtime шага.
+Версия пакета определяется [descriptor](../_extensions/course-cloud/_extension.yml) того же Git ref.
+Quarto 1.11.5 и CUE 0.17.1 согласованы с текущими правилами Core.
+Изменения main после выпущенного тега — **unreleased**.
+Документация установленного выпуска читается из того же immutable tag, что и код.
