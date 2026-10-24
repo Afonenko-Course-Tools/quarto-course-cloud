@@ -1,5 +1,6 @@
 local native = require("./native")
 local contract = require("./contract")
+local metrics = require("./observability/bridge").create_metrics("course-cloud")
 local M = {}
 function M.validate(doc)
   if doc.meta.cloud and doc.meta.cloud["virtual-machines"] then
@@ -82,7 +83,14 @@ function M.validate(doc)
     local directory = pandoc.path.directory(debug.getinfo(1, "S").source:sub(2))
     local args = {"run", directory .. "/validate-paths.ts", quarto.project.directory, "--contexts=" .. pandoc.json.encode(contexts)}
     for _, file in ipairs(files) do args[#args + 1] = file end
-    pandoc.pipe(os.getenv("QUARTO") or "quarto", args, "")
+    local input = quarto.doc and quarto.doc.input_file
+    local spec = {id = "course-cloud.validate-paths", kind = "command", attributes = {phase = "validate"}}
+    if type(input) == "string" and input ~= "" then spec.document_id = input end
+    metrics.wrap_sync(spec, function()
+      return pandoc.system.with_environment(metrics.child_env(pandoc.system.environment()), function()
+        return pandoc.pipe(os.getenv("QUARTO") or "quarto", args, "")
+      end)
+    end)()
   end
 end
 return M
