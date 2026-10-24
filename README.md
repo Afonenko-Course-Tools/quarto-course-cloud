@@ -4,6 +4,9 @@
 Версия данного ref определяется descriptor; контракт и документация выпуска
 читаются из того же тега, что и код. Изменения main после выпущенного тега —
 **unreleased**. Минимум — Quarto 1.11.5; при использовании Core требуется CUE 0.17.1.
+Текущий кандидат — **3.0.1**. До публикации нового тега устанавливайте полный
+локальный checkout: `quarto add /absolute/path/to/quarto-course-cloud --no-prompt`.
+Команды с тегом 3.0.1 применяются после его публикации.
 
 Расширение `course-cloud` описывает виртуальные машины, шаги работы и проверку облачных заданий в Quarto. Оно дополняет текущую спецификацию ядра курса: ядро собирает общую модель курса, а адаптер добавляет раздел `extensions.cloud` и проверяет его правилами CUE. Результат — проверенное описание и HTML курса. Создание виртуальных машин, выполнение действий и экспорт `_produced.yaml` в эту поставку не входят.
 
@@ -19,7 +22,7 @@ Native render использует Quarto 1.11.5 и CUE 0.17.1. Python, Node.js 
 
 ```sh
 quarto add Afonenko-Course-Tools/quarto-course@v4.0.0
-quarto add Afonenko-Course-Tools/quarto-course-cloud@v3.0.0
+quarto add Afonenko-Course-Tools/quarto-course-cloud@v3.0.1
 ```
 
 В `_quarto.yml`:
@@ -112,7 +115,7 @@ quarto run _extensions/Afonenko-Course-Tools/course-core/entrypoints/check.ts . 
 ```sh
 cd examples/course
 quarto add Afonenko-Course-Tools/quarto-course@v4.0.0 --no-prompt
-quarto add Afonenko-Course-Tools/quarto-course-cloud@v3.0.0 --no-prompt
+quarto add Afonenko-Course-Tools/quarto-course-cloud@v3.0.1 --no-prompt
 quarto run build.ts
 ```
 
@@ -194,3 +197,24 @@ Sidecar документа содержит source, view, format и profiles. Pr
 из команды выше; документация и код выбранного выпуска читаются из одного ref.
 Сохраните установленные `_extensions` в Git курса; при обновлении просмотрите diff и выполните проверки курса. Опубликованные
 теги неизменяемы: исправления получают новую версию и новый тег.
+
+## Наблюдение проверки файлов в 3.0.1
+
+Самодостаточный фасад Lua ABI 1 размечает только существующий вызов
+`validate-paths.ts`: операция `course-cloud.validate-paths` имеет `kind: command`,
+`phase: validate` и `attributes.extension_id: "course-cloud"`. Необязательный
+`document_id` берётся из непустого публичного `quarto.doc.input_file` при вызове.
+При неизвестном документе привязка к документу отсутствует; произвольный ID
+не создаётся. Это не полное семантическое покрытие функций Cloud.
+
+Окружение дочернего вызова передаётся через публичные
+`pandoc.system.environment()` и scoped `pandoc.system.with_environment`
+после `child_env`; родительское окружение восстанавливается. Глобальной мутации
+env и нового общего runtime нет. Режим `off` и отсутствие агента сохраняют
+исходную функцию, окружение фасада и native вызов.
+
+Самостоятельная проверка: `quarto run tests/performance-context.ts`. Она использует
+настоящие Pandoc API и дочерний процесс; её тестовый агент и узкие domain doubles
+не подтверждают все semantic guards. Полный native suite сохраняет legacy Core
+4.0.0 fixtures и принимается отдельно на итоговом HEAD. VM и действия задания
+не исполняются; публикация нового тега также требует отдельного gate.
